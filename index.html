@@ -8,15 +8,969 @@
     <title>An overview of K-Means and Fuzzy C-Means in action</title>
     <!--Antet start-->
     <p style="position: absolute; top: 0; left: 3em; color: black">
-      Eng. Andrei-Mihai Micu, 2023<br />
+      Eng. Andrei-Mihai Micu,<br />
+      Eng. Paul Stiegelbauer,<br />
+      Eng. Daria Muresan,<br />
       Facultatea de Automatică și Calculatoare<br />
       Universitatea Politehnică Timișoara, România<br />
-    <!--Antet end-->
+      <!--Antet end-->
     </p>
   </head>
-  <body>
+  <body style="max-width: 100%; overflow-x: hidden">
     <h1 style="text-align: center; position: relative; top: 2em">
-    An overview of K-Means and Fuzzy C-Means in action
+      An overview of K-Means and Fuzzy C-Means in action
     </h1>
+    <!--Abstract start-->
+    <div style="padding-left: 5em; padding-right: 5em">
+      <section>
+        <h2 style="position: relative; top: 5em; left: 5em">Abstract</h2>
+        <br />
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Clustering is a process used to group unlabelled data.
+          This helps in understanding the data and has applications in many
+          segments: market, social network, medical images, search results etc.
+          In this paper, we analyze two clustering techniques, K-Means and Fuzzy
+          C-Means, on two datasets, and compare the results.
+        </p>
+        <h2 style="position: relative; top: 5em; left: 5em">
+          Keywords — Cluster, Fuzzy C-Means, K-Means, Iris
+        </h2>
+      </section>
+    </div>
+    <!--Abstract end-->
+
+    <!--Introduction start-->
+    <div style="padding-left: 5em; padding-right: 5em">
+      <section>
+        <h2 style="position: relative; top: 5em; left: 5em">I. Introduction</h2>
+        <br />
+        <!--K means start-->
+        <h3 style="position: relative; top: 5em; left: 5em">A. K-means</h3>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;K-Means is a clustering algorithm that groups data points
+          into k (k defined by the user) clusters. It is an unsupervised
+          learning algorithm, meaning it is applied on unlabeled data [1]. The
+          algorithm works as follows:<br />
+          &emsp;&emsp;1. Initialize k centroids randomly.<br />
+          &emsp;&emsp;2. Assign each data point to the nearest centroid.<br />
+          &emsp;&emsp;3. Recalculate the centroids as the mean of the data
+          points assigned to it.<br />
+          &emsp;&emsp;4. Repeat steps 2 and 3 until the centroids no longer move
+          or a maximum number of iterations is reached.<br />
+          &emsp;&emsp;5. Each cluster is represented by its centroid.<br /><br />
+          &emsp;&emsp;The k-means algorithm aims to minimize the sum of squared
+          distances between data points and their assigned centroid. The number
+          of clusters, k, is a user-defined parameter and needs to be specified
+          before running the algorithm. The algorithm initializes the centroids
+          randomly and then updates them iteratively until convergence.<br /><br />
+          &emsp;&emsp;At each iteration, each data point is assigned to its
+          nearest centroid, based on the Euclidean distance between the data
+          point and centroid. After all points are assigned, the centroids are
+          updated to be the mean of the data points assigned to them. This
+          process repeats until either the centroids stop moving, or a maximum
+          number of iterations is reached.<br /><br />
+          &emsp;&emsp;The final result of the k-means algorithm is k clusters,
+          where each cluster is represented by its centroid and all data points
+          assigned to it. The algorithm does not guarantee that the final
+          clusters will be globally optimal,as it depends on the initial random
+          centroid selection. To address this issue, the algorithm can be run
+          multiple times with different random initializations and the best
+          result can be selected.<br /><br />
+        </p>
+        <!--K means end-->
+
+        <!--Fuzzy start-->
+        <h3 style="position: relative; top: 5em; left: 5em">
+          B. Fuzzy C-Means
+        </h3>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Fuzzy C-Means (FCM) is an unsupervised machine learning
+          clustering algorithm that partitions data into c clusters (c is a
+          user-defined number), where each data point belongs to each cluster
+          with a degree of membership ranging from 0 to 1. Unlike traditional
+          hard clustering algorithms (e.g. k-means), FCM allows each data point
+          to belong to multiple clusters with varying degrees of membership,
+          hence the "fuzzy" part of the name [2].<br /><br />
+          &emsp;&emsp;The algorithm works by minimizing an objective function
+          that measures the difference between the observed data and the cluster
+          centroids. The algorithm iteratively updates the membership values and
+          cluster centroids until the objective function converges to a minimum
+          value.<br /><br />
+          &emsp;&emsp;The steps of the Fuzzy C-Means (FCM) algorithm are as
+          follows [3]:<br />
+          &emsp;&emsp;1. Initialization: randomly select c initial cluster
+          centroids and set the degree of membership for each data point to each
+          cluster.<br />
+          &emsp;&emsp;2. Membership calculation: for each data point, calculate
+          its degree of membership to each cluster based on the Euclidean
+          distance between the data point and each cluster centroid. The
+          membership values are calculated using a membership function, usually
+          a Gaussian-like function.<br />
+          &emsp;&emsp;3. Centroid calculation: for each cluster, calculate the
+          new centroid based on the weighted average of the data points, where
+          the weights are the membership values of each data point to the
+          cluster.<br />
+          &emsp;&emsp;4. Object function calculation: calculate the objective
+          function that measures the difference between the observed data and
+          the cluster centroids.<br />
+          &emsp;&emsp;5. Repeat steps 2 to 4 until the objective function
+          converges to a minimum value or a maximum number of iterations is
+          reached.<br />
+          &emsp;&emsp;6. Output: the final cluster centroids and membership
+          values of each data point to each cluster.<br />
+        </p>
+        <!--Fuzzy end-->
+      </section>
+    </div>
+    <!--Introduction end-->
+
+    <!--Implementation start-->
+    <div style="padding-left: 5em; padding-right: 5em">
+      <section>
+        <h2 style="position: relative; top: 5em; left: 5em">
+          II. Implementation
+        </h2>
+        <br />
+        <!--Data preprocessing start-->
+        <h3 style="position: relative; top: 5em; left: 5em">
+          A. Data Preprocessing
+        </h3>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;The first dataset, Iris-150, contains 150 entries of
+          numeric data and labels for 3 types of Iris plants. The numeric data
+          is related to the plant’s flower proportion. The labels will be
+          referred to as ground truth henceforth.<br /><br />
+          &emsp;&emsp;The data is downloaded from sklearn’s datasets [4]. Before
+          going further, we standardize the data using a Standard Scaler
+          implementation from sklearn. <br /><br />
+          &emsp;&emsp;We are going to use the same data to perform K-Means and
+          FCM, when talking about Iris-150. <br /><br />
+          &emsp;&emsp;Taking a look at the data from Iris-150, we can already
+          tell that we have 3 clusters on our hands, the 3 species of plants.
+          After representing the data graphically, “Fig. 1” and “Fig. 2”, we can
+          observe that one plant species is significantly different from the
+          other 2 species. The remaining 2 species are only slightly different
+          from each other, which can be observed in “Fig. 3”. These similarities
+          will cause interesting results later on, when using the algorithms for
+          clustering.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="1.PNG"
+            alt=" Iris-150 dataset, sepal lengths "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 550;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 1. Iris-150 dataset, representation of sepal lengths for the
+            plants<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="2.PNG"
+            alt=" Iris-150 dataset, petal lengths "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 2. Iris-150 dataset, representation of petal lengths for the
+            plants<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="0.PNG"
+            alt=" Iris-150 dataset, species 1 and 2 overlap "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 3. Iris-150 dataset, graph representation for data components.
+            Species 1 and 2 overlap often and have similar shapes.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Dataset2 is an unknown dataset containing 178 samples,
+          each sample having 13 features. The dataset is composed only of
+          numeric data and contains no missing values.<br /><br />
+          &emsp;&emsp;The dataset was preprocessed in the same way as the
+          Iris-150 one, using the Standard Scaler from the sklearn library
+          [5].<br /><br />
+          &emsp;&emsp;Because Dataset2 contains 13 columns (features), the
+          spatial visualization of the data is impossible. In order to be able
+          to see the result of the FCM algorithm, i.e. how the data was divided
+          into clusters, we used the Principal Component Analysis (PCA)
+          technique. This technique is used to reduce the dimensionality of the
+          dataset by projecting the data onto a lower-dimensional space while
+          retaining as much information as possible. The goal of the PCA
+          technique is to find the principal components in the feature space
+          that account for the most variance in the data.<br /><br />
+          &emsp;&emsp;The graph below, Figure 4, shows the variance for each of
+          the 13 components in our dataset. We observed that the variance
+          increases steeply in the case of the first 3 components and then
+          plateaus. We therefore chose to reduce the dataset, using PCA, from 13
+          to 3 dimensions, this way being easier for us to visualize the data
+          while keeping the essential information.<br /><br />
+        </p>
+        <!--Data preprocessing end-->
+
+        <!--Implementation start-->
+        <h3 style="position: relative; top: 5em; left: 5em">
+          B. Implementation of algorithms used
+        </h3>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;We used the existing implementation of K-Means from the
+          sklearn library [6]. The implementation allows us to choose relevant
+          hyperparameters: the number of centroids, the random state of where
+          the centroid will be, the type of initialization of the centroids, the
+          number of times the algorithm iterates for a single run.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="3.PNG"
+            alt=" Variance vs number of components (features) in the dataset."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 550;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 4. Variance vs number of components (features) in the
+            dataset.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;After fitting our data to the K-Means implementation, we
+          have access to the predicted labels for the data and other information
+          regarding the centroids formed.<br /><br />
+          &emsp;&emsp;Regarding the Fuzzy C means algorithm, python offers a
+          dedicated library, skfuzzy [7]. Using this FCM implementation, we are
+          able to control relevant hyperparameters: number of clusters, maximum
+          number of iterations, degree of fuzziness (or membership coefficient),
+          error and the random state of the cluster initialized.<br /><br />
+        </p>
+        <!--Implementation end-->
+
+        <!--Optimal start-->
+        <h3 style="position: relative; top: 5em; left: 5em">
+          C. Finding the optimal number of clusters
+        </h3>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;For K-Means, we resort to measuring the sum of squared
+          distance between each point and the centroid in a cluster, WCSS for
+          short [8]. Running the algorithm with default hyperparameters for a
+          range of 3 to 20 clusters, we can see that WCSS is highest for 2 and 3
+          clusters.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="4.PNG"
+            alt=" Variance vs number of components (features) in the dataset."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 550;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 5. Iris-150 dataset, WCSS variation on different number of
+            clusters for K-Means.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;By using the elbow method [9], we pick cluster 3 to be the
+          ideal number of clusters for the Iris-150 dataset, using K-Means. This
+          is to say that the finding is in correspondence with the reality of
+          the dataset, knowing beforehand that we have 3 species of plants, thus
+          3 clusters.<br /><br />
+          &emsp;&emsp;For the FCM implementation, similarly, we measure FPC, the
+          fuzzy partition coefficient. As previously, we use the elbow method
+          and pick 3 clusters as the ideal number for carrying out
+          experiments.<br /><br />
+          &emsp;&emsp;To determine the best number of clusters (k) to divide
+          Dataset2 we used the Elbow method. For the elbow method we plotted the
+          value of the cost function for clusters in range 2, 10. We noticed the
+          ‘elbow’ point to be at 4 and also we computed the silhouette score for
+          the k (number of kernels) equals 3, 4 and 5 and what we got is
+          presented below in Table 1.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="5.PNG"
+            alt="Iris-150 dataset, FPC variation"
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 6. Iris-150 dataset, FPC variation on different number of
+            clusters for FCM.<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="tb1.PNG"
+            alt="The Silhouette scores obtained after performing
+            K-Means with 3, 4 and 5 kernels."
+            style="display: block; margin-left: auto; margin-right: auto"
+          />
+          <p style="text-align: center">
+            Table 1. The Silhouette scores obtained after performing K-Means
+            with 3, 4 and 5 kernels.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;We chose k = 4 for further computations on Dataset2.<br /><br />
+        </p>
+        <!--Optimal end-->
+
+        <!--Fine tunning start-->
+        <h3 style="position: relative; top: 5em; left: 5em">
+          D. Fine tuning of hyperparameters
+        </h3>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;In order to understand and find the best clustering
+          hyperparameters for K-means, we settle on a combination of scores.
+          Namely, we choose a combination of Silhouette, Adjusted Rand Index and
+          V measure, to give us an idea of how well the algorithms perform. More
+          on this in section 5.A, Metrics.<br /><br />
+          &emsp;&emsp;Judging from the score obtained by running the algorithm
+          for a given number of centroids, we get varying data, depending on a
+          few important hyperparameters. For K-Means, we couldn’t find a
+          relevant hyperparameter that, when changed, would affect the end
+          result. For FCM, the most important hyperparameter is the membership
+          coefficient of a data entry to the centroid.<br /><br />
+          &emsp;&emsp;For example, trying to change the clustering score for a
+          K-Means implementation by tweaking the number of iteration spent by
+          the algorithm, while keeping the other hyperparameters in place and
+          using 3 clusters, does not affect the score, “Fig. 7”. Same thing
+          happens when changing the random state of the centroid to be
+          initialized, “Fig. 8”.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="6.PNG"
+            alt="No score variation when changing the number of iterations"
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 7. No score variation when changing the number of iterations
+            performed by the K-Means.<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="7.PNG"
+            alt="No score variation when changing the number of iterations"
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 8. No score variation when changing the random state of
+            centroids for K-Means.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;When modifying the hyperparameters for FCM, namely, the
+          membership coefficient, we can observe, “Fig. 9”, that using 0.8
+          yields the best results, for a configuration of 3 clusters.<br /><br />
+          &emsp;&emsp;However, using different values for the error, which is
+          the relative tolerance with regards to Frobenius norm, present in the
+          FCM implementation, does not affect, on average, the resulting score.
+          The trendline in “Fig. 10” shows that, although giving different
+          results for specific values, the score remains the same, on
+          average.<br /><br />
+        </p>
+        <!--Fine tunning end-->
+
+        <!--Results start-->
+        <h3 style="position: relative; top: 5em; left: 5em">E. Results</h3>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;<b>1. Metrics used</b><br /><br />
+          &emsp;&emsp;The metrics used to measure how well the clustering worked
+          on the Iris-150 dataset, we chose the following scores, implemented in
+          sklearn: Silhouette score, Adjusted Random Index, Adjusted Mutual
+          Information, Fowlkes-Mallows score, V measure [10].<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="8.PNG"
+            alt=" Visible score variation when changing the membership coefficient for Fuzzy C Means."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 9. Visible score variation when changing the membership
+            coefficient for Fuzzy C Means.<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="9.PNG"
+            alt=" Trendline that shows minimal changes to score for error variation using FCM. "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 10. Trendline that shows minimal changes to score for error
+            variation using FCM.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;These metrics were chosen because we have access to the
+          ground truth values for the clusters. Thus, we are able to compare the
+          predicted labels to ground truth on how well the clustering happened.
+          As an added bonus, each of these measuring methods are done on
+          intervals of -1 to 1, which makes it easier when showcasing the
+          algorithm performances.<br /><br />
+          &emsp;&emsp;To evaluate the performance of Fuzzy CMeans and K-Means
+          algorithms on Dataset2, we used three methods [11]:<br /><br />
+          &emsp;&emsp;a. Silhouette Score:&emsp; The silhouette score measures
+          the similarity of each data point to its own cluster compared to other
+          clusters. A high silhouette score indicates that the data points are
+          well clustered, while a low score indicates that the data points may
+          not have been correctly assigned to a cluster.<br /><br />
+          &emsp;&emsp;b. Calinski-Harabasz Index:&emsp; The Calinski-Harabasz
+          index is a measure of the quality of clustering solutions that takes
+          into account both the within-cluster sum of squares and the
+          between-cluster sum of squares. A higher score indicates a better
+          clustering solution.<br /><br />
+          &emsp;&emsp;c. Davies-Bouldin Index:&emsp; The Davies-Bouldin index
+          measures the average similarity between each cluster and its most
+          similar cluster. A low Davies-Bouldin index indicates that the
+          clusters are well-separated, while a high score indicates that the
+          clusters overlap too much.<br /><br />
+          &emsp;&emsp;All these metrics require only the dataset and the
+          predictions made by the clustering algorithm to compute the
+          performance.<br /><br />
+          &emsp;&emsp;<b
+            >2. Graphs and highlights for the K-Means implementation</b
+          ><br /><br />
+          &emsp;&emsp;By looking at “Fig. 11” we can see that each score,
+          irrespective of computation behind, follows the same trend as the
+          other scores. A highlight can be observed when using 3 clusters and
+          the score for ARI changes substantially.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="10.PNG"
+            alt=" AMI, Silhouette, ARI, FWMW and V scores variation "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 11. AMI, Silhouette, ARI, FWMW and V scores variation on
+            different numbers of clusters, K-Means.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;We take a closer look at ARI’s variation over K-Means’
+          results for 20 clusters. The highlights can be observed with a red dot
+          on the graph in “Fig. 12”.<br /><br />
+          &emsp;&emsp;Although obvious to the external observer, Silhouette
+          manages to measure higher for 2 clusters instead of 3 clusters. As
+          hinted earlier, this is most likely caused by the similar sepal and
+          petal dimensions for two of the plants, thus making it appear as a
+          single cluster. The results can be observed in “Fig. 13”.<br /><br />
+          &emsp;&emsp;Finally, a 3D representation in “Fig. 14”. shows how
+          exactly K-Means clustered the data in Iris-150. Here, we can observe
+          how it behaves for 3 clusters. A 3D representation is chosen because
+          2D does not make the differences between clusters obvious. We can tell
+          that Cluster 1 and Cluster 3 are the two plants with similar
+          traits.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="11.PNG"
+            alt=" ARI score highlights "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 12. ARI score highlights (number of clusters, score value) for
+            different numbers of clusters, K-Means.<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="12.PNG"
+            alt=" Silhouette score highlights "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 13. Silhouette score highlights (number of clusters, score
+            value) for different numbers of clusters, K-Means.<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="13.PNG"
+            alt="  Clustering achieved by applying K-Means to Iris-150 "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 14. Clustering achieved by applying K-Means to Iris-150, using
+            3 clusters. Clusters are color coded and each centroid is
+            highlighted with red.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;If we represent graphically how K-Means works for 2
+          clusters for Iris-150, “Fig. 15”, we can see that the two clusters
+          mentioned above became Cluster 2 (blue).<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="14.PNG"
+            alt="  Clustering achieved by applying K-Means to Iris-150 "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 15. Clustering achieved by applying K-Means to Iris-150, using
+            2 clusters. Clusters are color coded and each centroid is
+            highlighted with red. The previous 2 clusters (green and yellow)
+            “merged” into a single cluster (blue).<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;<b>3. Graphs and highlights for the FCM implementation</b
+          ><br /><br />
+          &emsp;&emsp;&emsp;&emsp;a. Iris-150<br /><br />
+          &emsp;&emsp;When applying the FCM implementation, taking into account
+          the same scores observed for K-Means, we can observe the same trend in
+          “Fig. 16”. The algorithm works great for 2 and 3 clusters. The most
+          important highlight is the spike observed in the Adjusted Rand Index
+          score when using 3 clusters.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="15.PNG"
+            alt="Silhouette, ARI and AMI scores variation for different numbers of clusters, using FCM. "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 16. Silhouette, ARI and AMI scores variation for different
+            numbers of clusters, using FCM.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;When measuring with the Silhouette score, we obtain
+          similar results as for K-Means. However, when isolating the ARI score
+          for 2 to 20 clusters, we can observe a score increase. The algorithm
+          performs the best when using 3 clusters “Fig. 17”. Interestingly,
+          using 4 clusters yields a better result than using 2 clusters, which
+          is not something encountered before during this research.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="16.PNG"
+            alt=" ARI score highlights "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 17. ARI score highlights (number of clusters, score value) for
+            different numbers of clusters, using FCM.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Finally, the clustering achieved by the FCM implementation
+          with the fine tuned hyperparameters can be observed in the 3D graph,
+          “Fig. 18”.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="17.PNG"
+            alt=" AClustering achieved by applying K-Means to Iris-150 "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 350;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 18. Clustering achieved by applying K-Means to Iris-150, using
+            3 clusters. Clusters are color coded and each centroid is
+            highlighted with red.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;&emsp;&emsp;b. Dataset2<br /><br />
+          &emsp;&emsp;The Kmeans algorithm outperforms the Fuzzy KMeans in terms
+          of Silhouette and Calinski-Harabasz score, while the Davies-Bouldin
+          Index is better for the FCM algorithm.<br /><br />
+          &emsp;&emsp;In the following two graphs we have the 3D visualization
+          of the clustered dataset. This graph was obtained from the original
+          13-dimensional clustered dataset, on which the PCA technique was
+          applied.<br /><br />
+          &emsp;&emsp;Firstly, the KMeans clusters are shown. On the right side
+          of the image, we can see a cluster of yellow points, well separated
+          from the rest of the points. Going towards the left side, we can see
+          the green and maroon cluster, with only small overlaps. The orange
+          cluster is also isolated from the maroon and green cluster in the 3D
+          space (it can be seen that it is closer to the viewer than the other
+          ones).<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="18.PNG"
+            alt=" 3D visualization of the clusters after performing
+            K-Means on Dataset2"
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 250;
+            "
+          />
+          <p style="text-align: center">
+            Figure 19. 3D visualization of the clusters after performing K-Means
+            on Dataset2. The number of clusters (k) is 4 and the original data
+            from the dataset was reduced from 13-dimensions to 3-dimensions
+            using PCA.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Regarding the FCM clusters, we have a similar situation
+          with the KMeans case. However, here there are more overlaps than in
+          the previous case (for example, the green, orange and the brown
+          cluster).<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="19.PNG"
+            alt=" 3D visualization of the clusters after performing FCM
+            on Dataset2. "
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 250;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 20. 3D visualization of the clusters after performing FCM on
+            Dataset2. The number of clusters (k) is 4 and the original data from
+            the dataset was reduced from 13-dimensions to 3-dimensions using
+            PCA.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Overall, looking at both the scores and the
+          visualizations, it can be said that the KMeans algorithm renders a
+          better clustering result.<br /><br />
+          &emsp;&emsp;&emsp;&emsp;c. Iris databases clustered using partitioned
+          and parallel implementations<br /><br />
+          &emsp;&emsp;We tried implementing a partitioned FCM in order to
+          measure how much time it takes to cluster the Iris-150 to
+          Iris-15000000 databases. Although measurements have been taken for all
+          databases, we will only talk about the results on the smallest and the
+          largest database.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="tb2.PNG"
+            alt=" The scores obtained by K-Means and FCM algorithms."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 250;
+            "
+          />
+          <p style="text-align: center">
+            Table 2. The scores obtained by K-Means and FCM algorithms.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;In “Fig. 21” and “Fig. 22”, we can observe how different
+          numbers of partitions affected the time it takes for FCM to cluster
+          the Iris-150 and Iris-15000000 datasets.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="20.PNG"
+            alt=" How much time it takes to cluster the Iris-150 dataset
+            for different numbers of partitions."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 250;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 21. How much time it takes to cluster the Iris-150 dataset for
+            different numbers of partitions.<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="21.PNG"
+            alt=" How much time it takes to cluster the Iris-1500000
+            dataset for different numbers of partitions."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 250;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 22. How much time it takes to cluster the Iris-1500000 dataset
+            for different numbers of partitions.<br />
+          </p>
+        </div>
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Judging by the final results, tweaks to implementation are
+          still required in order to push down the time it takes for a
+          partitioned clustering.<br /><br />
+          &emsp;&emsp;The same can be said for the parallel implementation using
+          threads. The results for the same datasets can be observed below, in
+          “Fig. 23” and “Fig. 24”. The implementation would yield better results
+          if we were to run the code on a different machine.<br /><br />
+          &emsp;&emsp;The results are from running the python implementations on
+          Google Collaboratory, which is known to have a thread limit.<br /><br />
+        </p>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="22.PNG"
+            alt=" How much time it takes to cluster the Iris-150 dataset
+            using a threaded implementation."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 250;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 23. How much time it takes to cluster the Iris-150 dataset
+            using a threaded implementation.<br />
+          </p>
+        </div>
+        <div style="position: relative; top: 3.5em">
+          <img
+            src="23.PNG"
+            alt="How much time it takes to cluster the Iris-1500000
+            dataset using a threaded implementation."
+            style="
+              display: block;
+              margin-left: auto;
+              margin-right: auto;
+              width: 450;
+              height: 250;
+            "
+          />
+          <p style="text-align: center">
+            Fig. 24. How much time it takes to cluster the Iris-1500000 dataset
+            using a threaded implementation.<br />
+          </p>
+        </div>
+        <!--Results end-->
+      </section>
+      <!--Implementation end-->
+
+      <!--Problems start-->
+      <section>
+        <h2 style="position: relative; top: 5em; left: 5em">
+          III. Problems encountered and solutions used
+        </h2>
+        <br />
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;1. Choosing the correct number of clusters was the first
+          issue we encountered. The solution we found is applying the Elbow
+          Method in order to find the optimal number of clusters.<br /><br />
+          &emsp;&emsp;The Elbow method plots the value of the cost function
+          (within-cluster sum of squares) against the number of clusters. The
+          "elbow" point on the plot represents the optimal number of clusters,
+          as it is the point where the cost function starts to decrease at a
+          slower rate.<br /><br />
+          &emsp;&emsp;1. Choosing the correct number of clusters was the first
+          issue we encountered. The solution we found is applying the Elbow
+          Method in order to find the optimal number of clusters.<br /><br />
+          &emsp;&emsp;2. Picking the right metrics for measuring the accuracy of
+          the clustering once the algorithm finishes was a problem because of
+          the large number of metrics available. The solution was extensive
+          reading about each score and documenting the response from the
+          community.<br /><br />
+          &emsp;&emsp;3. Running the clustering for the partitioned and parallel
+          method did not yield significant improvements compared to the single
+          process, single partition way. This might be caused by the Google
+          Collaboratory limitations in regards to threads.<br /><br />
+        </p>
+      </section>
+      <!--Problems end-->
+
+      <!--Conclusions start-->
+      <section>
+        <h2 style="position: relative; top: 5em; left: 5em">IV. Conclusions</h2>
+        <br />
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;Both implementations, K-Means and Fuzzy C Means, achieved
+          similar results on the Iris-150 dataset. The FCM implementation has a
+          slight advantage over K-Means, using the same number of clusters. Fine
+          tuning the hyperparameters did not seem to influence this end
+          result.<br /><br />
+          &emsp;&emsp;For Dataset2 we used the elbow method with WCSS in order
+          to determine the optimal number of clusters for K-Means and FCP (fuzzy
+          partition coefficient) for the Fuzzy CMeans algorithm. The K-Means
+          algorithm gave overall better clustering results than Fuzzy CMeans in
+          terms of the three metrics that we used. Also when visualizing the
+          clusters in 3D (using PCA projection) the Fuzzy CMeans contained more
+          overlaps than K-Means.<br /><br />
+        </p>
+      </section>
+      <!--Conclusions end-->
+
+      <!--Referinte start-->
+      <section>
+        <h2 style="position: relative; top: 5em; left: 5em">V. References</h2>
+        <br />
+        <p style="position: relative; top: 5em">
+          &emsp;&emsp;[1] K. P. Sinaga and M. -S. Yang, "Unsupervised K-Means
+          Clustering Algorithm," in IEEE Access, vol. 8, pp. 80716-80727, 2020,
+          doi: 10.1109/ACCESS.2020.2988796.
+          <br />
+          &emsp;&emsp;[2] James C. Bezdek, Robert Ehrlich, William Full, “FCM:
+          The fuzzy c-means clustering algorithm”, in Computers & Geosciences,
+          Volume 10, Issues 2–3, 1984, Pages 191-203, ISSN 0098-3004.<br />
+          &emsp;&emsp;[3] Bo Yuan, G. J. Klir and J. F. Swan-Stone,
+          "Evolutionary fuzzy c-means clustering algorithm," Proceedings of 1995
+          IEEE International Conference on Fuzzy Systems., Yokohama, Japan,
+          1995, pp. 2221-2226 vol.4, doi: 10.1109/FUZZY.1995.409988. <br />
+          &emsp;&emsp;[4] Datasets, scikit-learn developers,
+          <a href="https://scikit-learn.org/stable/datasets.html">URL</a><br />
+          &emsp;&emsp;[5] Standard Scaler, scikit-learn developers,
+          <a
+            href="https://scikit-learn.org/stable/modules/generated/sklearn.
+            preprocessing.StandardScaler.html"
+            >URL</a
+          ><br />
+          &emsp;&emsp;[6] K-Means, scikit-learn developers,
+          <a
+            href="https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html"
+            >URL</a
+          ><br />
+          &emsp;&emsp;[7] skfuzzy, M. Dias; A. Florêncio, fuzzy-c-means, 2021,
+          doi: 10.5281/zenodo.3066222<br />
+          &emsp;&emsp;[8] In-depth Intuition of K-Means Clustering Algorithm in
+          Machine Learning, B. Saji, Data Science Blogathon, 2022,
+          <a
+            href="https://www.analyticsvidhya.com/blog/2021/01/in-depth-intuition-of-k-means-clustering-algorithm-in-machine-learning/"
+            >URL</a
+          ><br />
+          &emsp;&emsp;[9] Elbow Method, scikit-yb developers,
+          <a href="https://www.scikit-yb.org/en/latest/api/cluster/elbow.html"
+            >URL</a
+          ><br />
+          &emsp;&emsp;[10] Clustering metrics, scikit-learn developers
+          <a
+            href="https://scikit-learn.org/stable/modules/classes.html#module-sklearn.metrics"
+            >URL</a
+          ><br />
+          &emsp;&emsp;[11] Performance metrics for clustering, E. Zuccarelli,
+          Towards Data Science, 2021,
+          <a
+            href="https://towardsdatascience.com/performance-metrics-in-machine-learning-part-3-clustering-d69550662dc6"
+            >URL</a
+          ><br />
+        </p>
+      </section>
+      <!--Referinte end-->
+    </div>
   </body>
 </html>
